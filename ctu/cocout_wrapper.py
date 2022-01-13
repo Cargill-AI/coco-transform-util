@@ -80,8 +80,10 @@ def get_modif_coco_annotation(img, coco_path, modif_step_di):
     c_di = modif_step_di
     
     ## 1. Get this Annotation from local
-    coco_ann_di = WholeCoco2SingleImgCoco( annotation_path=coco_path, coco_di=None
-                                         ).run(modif_step_di['img_name'])
+    coco_ann_di = WholeCoco2SingleImgCoco(
+        annotation_path=coco_path, coco_di=None
+        ).run(modif_step_di['img_name'])
+    
     if coco_ann_di is None:
         return None
     
@@ -94,7 +96,8 @@ def get_modif_coco_annotation(img, coco_path, modif_step_di):
     )
     
     ## 3. convert it to coordinate format
-    final_ann_di = CocoRel2CocoSpecificSize().run(rel_coco_di, desired_ht_wd=img.shape[:2])
+    final_ann_di = CocoRel2CocoSpecificSize().run(rel_coco_di, desired_ht_wd=img.shape[:2], 
+                                              crop_oof=True, area_thresh_for_oof=0)
     
     return final_ann_di
 

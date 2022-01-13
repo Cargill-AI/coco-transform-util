@@ -27,6 +27,12 @@ class Coco2CocoRel:
             for i,coordinate in enumerate(coordinate_li) 
         ]
 
+    def _transform_one_image_info(self, image_info):
+        ''' works on a element ''' 
+        image_info['orig_width'] = image_info['width']
+        image_info['orig_height'] = image_info['height']
+        return image_info
+    
     def _transform_one_annotation(self, image_info, anno_info):
         ''' works on a element ''' 
         img_wd, img_ht = image_info['width'], image_info['height']
@@ -53,10 +59,17 @@ class Coco2CocoRel:
             # image_index = anno_info['image_id'] - 1
             image_index = [ i for i,e in enumerate(coco_ann_di['images']) 
                            if e['id']==anno_info['image_id'] ][0]
+
+            ## image info
             image_info = coco_ann_di['images'][image_index]
 
+            ## edit annootation
             coco_ann_di['annotations'][i] = self._transform_one_annotation(
                 image_info, anno_info)
+            
+            ## image info
+            coco_ann_di['images'][image_index] = self._transform_one_image_info(image_info)
+            
         return coco_ann_di
     
     

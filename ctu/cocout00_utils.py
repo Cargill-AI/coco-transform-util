@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 class ImgTransform:
     '''
     Some Basic Image Transformation utilities
@@ -114,7 +115,6 @@ class BBox:
     ## Bounding box format style [x1, y1, width, height]
     STYLE_WIDTH_HEIGHT = 'widthheight'
 
-
     def __init__(self, bbox, style=None):
         '''
         Input:
@@ -139,7 +139,6 @@ class BBox:
             self._xmax = self._xmin + self.width
             self._ymax = self._ymin + self.height
 
-
     @property
     def min_point(self):
         ''' Minimum points of the bounding box (x1, y1) '''
@@ -162,7 +161,6 @@ class BBox:
         image_copy = image.copy()
         cv2.rectangle(image_copy, self.min_point, self.max_point, color=color, thickness=thickness)
         return image_copy
-
 
 
 class Polygons:
@@ -209,7 +207,6 @@ class Polygons:
             self._c_segmentation = [polygon.tolist() for polygon in self.polygons]
         return self._c_segmentation
 
-
     @classmethod
     def create(cls, polygons):
         if isinstance(polygons, Polygons.INSTANCE_TYPES):
@@ -217,7 +214,6 @@ class Polygons:
         if isinstance(polygons, Polygons):
             return polygons
         return None
-
 
     def proj_to_bbox(self):
         '''
@@ -278,7 +274,6 @@ class Polygons:
         return image_copy
 
 
-
 class Mask:
     ''' Mask class '''
     _c_polygons = None
@@ -287,7 +282,7 @@ class Mask:
 
     def __init__(self, array):
         self.array = np.array(array, dtype=bool)
-        
+
     def area_of_mask(self):
         return self.array.sum()
 
@@ -320,15 +315,15 @@ class ColorRandom:
     def _rgb(self):
         color = list(np.random.choice(range(256), size=3))
         # color = np.random.randint(0, 255, size=(3, ))
-        
+
         #convert data types int64 to int and return
         return (int(color[0]), int(color[1]), int(color[2])) 
-    
+
 
 class Visualize:
     '''
     '''
-    
+
     def _view_img_using_matplot(self, image, title=None, figure_size=(6, 3)):
         ''' matplot based image view '''
         img = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
@@ -387,9 +382,42 @@ class Visualize:
         ## Show the Image
         Visualize()._view_img_using_matplot(draw_im)
 
-
 '''
 img = cv2.imread('example_data/Coffee-beans.jpeg')
 img = Transform.resize_with_aspect_ratio(img, width=300, height=900)
 Visualize().draw_annotation(img)
+'''
+
+
+def create_mask(image, poly, transparent_mask=True):
+    '''
+    a mask is the same size as our image, but has only two pixel
+    values, 0 and 255 -- pixels with a value of 0 (background) are
+    ignored in the original image while mask pixels with a value of
+    255 (foreground) are allowed to be kept
+    Inputs:
+        img: bgr image
+        poly: anno['annotations'][0]['segmentation']; in segmentation format
+            poly = [[300.63, 194.93, 324.29, 189.40, 340.06, 189.40, 350.44, 189.40, 
+                     392.36, 218.17, 399.41, 247.32, 371.61, 285.32, 295.65, 285.69, 
+                     271.58, 267.24, 266.18, 232.56, 287.35, 201.20]]
+        transparent_mask: If False Boolean mask else transparent mask
+    '''
+    ## creating blank mask
+    mask = np.zeros(image.shape[:2], dtype='uint8')
+
+    ## marking poly-area in mask
+    poly_pt_format = Polygons(poly).style_points
+    cv2.fillPoly(mask, poly_pt_format, color=255)
+
+    ## creating transparent mask if asked
+    if transparent_mask:
+        mask = cv2.bitwise_and(image, image, mask=mask)
+
+    return mask
+
+
+'''
+mask = create_mask(image, poly, transparent_mask=True)
+aml.viewImage(mask)
 '''
