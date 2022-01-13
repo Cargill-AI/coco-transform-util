@@ -1,7 +1,7 @@
 
 import cv2
-import amleet as aml
 from copy import deepcopy
+from ctu.cocout00_utils import ImgTransform
 from ctu.cocout01_slicer import WholeCoco2SingleImgCoco
 from ctu.cocout02_invariant_format import Coco2CocoRel
 from ctu.cocout03_inv_to_coco import CocoRel2CocoSpecificSize
@@ -55,7 +55,7 @@ def get_modif_image(modif_step_di):
     ## 2. Size change
     if c_di['image_ht_wd'] is not None:
         if c_di['aspect_ratio']=='maintain':
-            img = aml.FrameManipulate.resize_with_aspect_ratio(
+            img = ImgTransform.resize_with_aspect_ratio(
                 img, width=c_di['image_ht_wd'][1])
         else:
             img = cv2.resize(
@@ -63,12 +63,12 @@ def get_modif_image(modif_step_di):
 
     ## 3. Add padding
     if c_di['padding_ht_wd'] is not None:
-        img = add_relative_padding_to_image(
+        img = ImgTransform.add_relative_padding_to_image(
             img, rel_padding_ht_wd=c_di['padding_ht_wd'], pad_color=c_di['padding_color'])
 
     ## 4. Crop
     if c_di['crop_pt1_pt2'] is not None:
-        img = aml.FrameManipulate.relative_size_based_crop(
+        img = ImgTransform.relative_size_based_crop(
             img, rel_pt1=c_di['crop_pt1_pt2'][0], rel_pt2=c_di['crop_pt1_pt2'][1])
         
     return img
@@ -101,79 +101,5 @@ def get_modif_coco_annotation(img, coco_path, modif_step_di):
 
 
 # ---------------------------------------------------------------------------------------------------------- #
-
-def add_relative_padding_to_image(img, rel_padding_ht_wd=(0.15,0.15), pad_color=(10,10,10)):
-    ''' ------------------------------------------------------------------------------------<<< Add this in the COCO2COCOREL Code
-    Image will be kept at the center and equivalent size of padding 
-    will be added on two sides
-    '''
-    scht, scwd = img.shape[:2]
-    extra_x, extra_y = int(scht*rel_padding_ht_wd[0]), int(scwd*rel_padding_ht_wd[1])
-    top, bottom = extra_x, extra_x
-    left, right = extra_y, extra_y
-
-    pdd_img = cv2.copyMakeBorder(img, top, bottom, left, right, cv2.BORDER_CONSTANT, 
-                                 value=pad_color)
-    return pdd_img
-
-
-
-## Draw the annotation on Image
-def show_img_with_annotation(img, coco_ann_di=None, cls_mapper_di=None, 
-                             draw_what=['bbox', 'polyline', 'mask'], thickness=10):
-    ''' 
-        draw_what = ['polyline', 'bbox', 'mask' ]
-        cls_mapper_di = {
-            '0': 'reference_object',
-            '1': 'orange',
-            '2': 'carrot',
-            '3': 'potato'
-        }
-    '''
-    draw_im = img.copy()
-    color_di = {}
-    
-    if coco_ann_di is not None:
-        for ann in coco_ann_di['annotations']:
-
-            ## assign and get color for the class
-            if cls_mapper_di is None:
-                clr = aml.ColorConvRand().random()
-                color = clr.rgb
-            else:
-                cls = str(ann['category_id'])
-                clr = aml.ColorConvRand().random()
-                color = clr.rgb
-                
-                ## if already assigned then pick that color
-                if cls in color_di.keys():
-                    color = color_di[cls]
-                else:
-                    color_di[cls] = color
-
-            ## draw what ever is asked
-            pol = aml.Polygons.create(ann['segmentation'])
-            if 'bbox' in draw_what:
-                bb = pol.proj_to_bbox()
-                draw_im = bb.draw(image=draw_im, color=color, thickness=thickness)
-
-            if 'polyline' in draw_what:
-                draw_im = pol.draw(image=draw_im, color=color, thickness=thickness)
-
-            if 'mask' in draw_what:
-                msk = pol.proj_to_mask(width=img.shape[1], height=img.shape[0])
-                # mask_as_array = msk.array
-                draw_im = msk.draw(image=draw_im, color=color)
-        
-    ## Show the Image
-    aml.viewImage(draw_im, show_in_rgb=True, input_color_space='bgr')
-
-    
-    
-
-
-
-    
-    
     
     

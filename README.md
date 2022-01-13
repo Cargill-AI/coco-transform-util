@@ -8,7 +8,7 @@ A python package to perform same transformation to coco-annotation as performed 
 ```bash
 $ git clone https://git.cglcloud.com/ILC-APAC/coco-transform-util.git
 $ cd coco-transform-util
-$ pip3 setup.py install
+$ python3 setup.py install
 ```
 
 ### Way 2
@@ -34,11 +34,14 @@ print(ctu.__version__)
 2. Flexibility: Rescaling of images and annotations to meet the need of Model/Framework.  
 3. Cost Saving: Lesser Computation requirement as images can be downscaled.  
 4. Interpretability: Annotation Visualization is also a part of this package.  
-5. Ability to handle other cases: Added Functionality such as annotaion cropping or padding can help in multiple other cases. eg. cropping out each object image & annotation from an original image. 
-
-
+5. Ability to handle other cases: Added Functionality such as cropping or padding of the annotation can help in multiple other cases such as:
+    - cropping out each object image & annotation from an original image
+    - cropping unnecessary area to zoom in on some particular area.
+    - converting images to 1:1 aspect ratio by using padding and/or cropping.
+  
+  
 ## How to use it?
-
+  
 ### Core
 There are three core modules inside that helps in performing operations on COCO Annotation. These can imported as shown below:  
 ```python
@@ -50,8 +53,8 @@ It's recommended that you have look at `samples/example_core_modules.py` to unde
 Making use of wrappers can also come in handly to perform multiple operations in a much simpler and interpretable manner using the functions provided below:  
 ```python
 from ctu import (
-    sample_modif_step_di, accept_and_process_modif_di, get_modif_image, 
-    get_modif_coco_annotation, show_img_with_annotation
+    sample_modif_step_di, get_modif_imag, get_modif_coco_annotation, 
+    accept_and_process_modif_di, ImgTransform, Visualize
 )
 ```
 It's recommended that you have look at `samples/example_highlevel_function.py` to understand and explore how to use these. 
@@ -65,4 +68,15 @@ Some sample data has also been provided with this package at `example_data/*` to
 A sample HTML created from Jupyter-Notebook, contating some sample results has been added to the path `samples/Demo-SampleOutput.html`.  
   
   
+## Version History
+
+- v0.1: Core Modules: `WholeCoco2SingleImgCoco, Coco2CocoRel, CocoRel2CocoSpecificSize`. External Dependency on AMLEET package.
+- v0.2: Completed: Removed the dependency on AMLEET package. Develop Core Module: `AggreagateCoco`. Addition of field "area" under "annotations" in coco.
+- v0.3: **In Development:** Ability to export transformed image and annotation per image wise and as a whole too. Crop out the out of frame annotation too.
+
   
+## Future  
+- Removing Dependencies on AMLEET package.
+- (Core Module) Ability to combine multiple individual image wise coco annotation into a single coco annotation.
+- COCO to other annotation format can also be a feeature to this package.
+- Annotation Visualization + Mask creation can become a core feature to this library.

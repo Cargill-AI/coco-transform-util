@@ -3,7 +3,9 @@ from copy import deepcopy
 from ctu.cocout01_slicer import WholeCoco2SingleImgCoco
 
 class Coco2CocoRel:
-    ''' Convert General Coco annotation to relative coordinate '''
+    ''' Convert General Coco annotation to relative coordinate 
+    "area" is droppd in this format.
+    '''
     
     def __init__(self, msg=False):
         self.msg = msg

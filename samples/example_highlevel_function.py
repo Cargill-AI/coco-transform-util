@@ -8,12 +8,13 @@ print('Current Working Dir for the Code:', os.getcwd())
 
 import cv2
 import glob
+import json
 import random
 from ctu import (
-    sample_modif_step_di, accept_and_process_modif_di, get_modif_image, 
-    get_modif_coco_annotation, show_img_with_annotation
+    sample_modif_step_di, accept_and_process_modif_di, 
+    get_modif_image, get_modif_coco_annotation
 )
-
+from ctu import Visualize, AggreagateCoco
 
 def run():
     coco_path= 'example_data/coco-annotation.json'
@@ -37,7 +38,10 @@ def run():
         '4':'lemon',
         '5':'orange'
     } if same_color_for_class else None
-
+    
+    temp_dir = './temporary/'
+    if not os.path.exists(temp_dir): os.mkdir(temp_dir) # new
+    annotation_li = []  # new
     while counter<limit:
 
         print('-'*100)
@@ -55,10 +59,39 @@ def run():
         print('Image Shape: ', img.shape)
 
         anno = get_modif_coco_annotation(img, coco_path, modif_di)
+        
+        ## Save Image Locally and change the image name in the annotation
+        img_new_name = f'./temporary/file_{counter}.jpeg'
+        cv2.imwrite(img_new_name, img)
+        print('New Image Saved:', img_new_name.split('/')[-1])
+        anno['images'][0]['file_name'] = img_new_name.split('/')[-1]
+        
+        coco_new_path = f'./temporary/coco_annotation_file_{counter}.json'
+        with open(coco_new_path, 'w') as f:
+            json.dump(anno, f) #, indent=4
 
-        show_img_with_annotation(img, anno, cls_mapper_di=cls_mapper_di, draw_what=['polyline', 'mask'])
+
+        annotation_li.append(anno)  # new
+        
+        Visualize.draw_annotation(img, anno, cls_mapper_di=cls_mapper_di, draw_what=['polyline', 'mask'])
 
         counter += 1
+    
+    ## Aggregate Coco Annotations
+    print('# of Individual Annotations: ', len(annotation_li))
+    print('Aggregating Individual Annotations....')
+    agg_coco_di = AggreagateCoco(annotation_li).run(if_img_name_match='append', show_warning='True')
+    print('.... Complete !!!')
+    print('# of Images in aggregated Anno:', len(agg_coco_di['images']))
+    print('# of Annotation in aggregated Anno:', len(agg_coco_di['annotations']))
+    
+    coco_new_path = './temporary/coco_annotation.json'
+    with open(coco_new_path, 'w') as f:
+        json.dump(agg_coco_di, f, indent=4)
+    print('Annotation Saving Location:',coco_new_path)
+    
+    return agg_coco_di
+    
     
 if __name__=='__main__':
     run()
