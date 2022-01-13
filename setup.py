@@ -12,9 +12,7 @@ with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 install_requires = [
-    'opencv-python-headless==4.5.2.54',
-    'numpy==1.19.5',
-    'matplotlib==3.2.0'
+    'opencv-python-headless==4.5.2.54'
 ]
 
 setup(

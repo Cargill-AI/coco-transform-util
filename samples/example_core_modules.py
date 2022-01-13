@@ -9,8 +9,9 @@ print('Current Working Dir for the Code:', os.getcwd())
 import cv2
 import glob
 import random
+import amleet as aml
 from ctu import WholeCoco2SingleImgCoco, Coco2CocoRel, CocoRel2CocoSpecificSize
-from ctu import ImgTransform, Visualize
+from ctu import add_relative_padding_to_image, show_img_with_annotation
 
 
 def run():
@@ -33,14 +34,14 @@ def run():
 
     ## draw with annotation
     print('\nOriginal')
-    Visualize.draw_annotation(img, coco_ann_di)
+    show_img_with_annotation(img, coco_ann_di)
 
 
     # ----------------------------- < Rescaling image size (With Aspect Ratio)
 
     ## reading the image
     img = cv2.imread(path)
-    img = ImgTransform.resize_with_aspect_ratio(img, width=1000)
+    img = aml.FrameManipulate.resize_with_aspect_ratio(img, width=1000)
 
     ## annotaion for the same
     coco_ann_di = WholeCoco2SingleImgCoco( annotation_path=coco_path, coco_di=None).run(img_name)
@@ -49,7 +50,7 @@ def run():
 
     ## draw with annotation
     print('\nRescaling image size (With Aspect Ratio)')
-    Visualize.draw_annotation(img, final_ann_di)
+    show_img_with_annotation(img, final_ann_di)
 
     # ----------------------------- < Rescaling image size (Without Aspect Ratio)
 
@@ -66,7 +67,7 @@ def run():
 
     ## draw with annotation
     print('\nRescaling image size (Without Aspect Ratio)')
-    Visualize.draw_annotation(img, final_ann_di)
+    show_img_with_annotation(img, final_ann_di)
 
 
     # ----------------------------- < Rescaling image size + add padding to the image
@@ -77,8 +78,7 @@ def run():
     ## reading the image & changing the size
     img = cv2.imread(path)
     img = cv2.resize(img, wd_ht, interpolation = cv2.INTER_AREA)
-    img = ImgTransform.add_relative_padding_to_image(
-        img, rel_padding_ht_wd=padding_htwd, pad_color=(40,40,40))
+    img = add_relative_padding_to_image(img, rel_padding_ht_wd=padding_htwd, pad_color=(40,40,40))
 
     ## annotaion for the same
     coco_ann_di = WholeCoco2SingleImgCoco( annotation_path=coco_path, coco_di=None).run(img_name)
@@ -87,7 +87,7 @@ def run():
 
     ## draw with annotation
     print('\nRescaling image size + add padding to the image')
-    Visualize.draw_annotation(img, final_ann_di)
+    show_img_with_annotation(img, final_ann_di)
 
 
     # ----------------------------- < Rescaling image size + cropping the imagee & maintaing the annotation
@@ -98,10 +98,8 @@ def run():
     ## reading the image & changing the size
     img = cv2.imread(path)
     img = cv2.resize(img, wd_ht, interpolation = cv2.INTER_AREA)
-    # img = ImgTransform.add_relative_padding_to_image(
-    #     img, rel_padding_ht_wd=padding_htwd, pad_color=(40,40,40))
-    img = ImgTransform.relative_size_based_crop(
-        img, rel_pt1=crop_rel_pt1_pt2[0], rel_pt2=crop_rel_pt1_pt2[1])
+    # img = add_relative_padding_to_image(img, rel_padding_ht_wd=padding_htwd, pad_color=(40,40,40))
+    img = aml.FrameManipulate.relative_size_based_crop(img, rel_pt1=crop_rel_pt1_pt2[0], rel_pt2=crop_rel_pt1_pt2[1])
 
     ## annotaion for the same
     coco_ann_di = WholeCoco2SingleImgCoco( annotation_path=coco_path, coco_di=None).run(img_name)
@@ -110,7 +108,7 @@ def run():
 
     ## draw with annotation
     print('\nRescaling image size + cropping the imagee & maintaing the annotation')
-    Visualize.draw_annotation(img, final_ann_di)
+    show_img_with_annotation(img, final_ann_di)
 
 
     # ----------------------------- < Rescaling image size + add padding to the image + cropping the imagee & maintaing the annotation
@@ -122,10 +120,8 @@ def run():
     ## reading the image & changing the size
     img = cv2.imread(path)
     img = cv2.resize(img, wd_ht, interpolation = cv2.INTER_AREA)
-    img = ImgTransform.add_relative_padding_to_image(
-        img, rel_padding_ht_wd=padding_htwd, pad_color=(40,40,40))
-    img = ImgTransform.relative_size_based_crop(
-        img, rel_pt1=crop_rel_pt1_pt2[0], rel_pt2=crop_rel_pt1_pt2[1])
+    img = add_relative_padding_to_image(img, rel_padding_ht_wd=padding_htwd, pad_color=(40,40,40))
+    img = aml.FrameManipulate.relative_size_based_crop(img, rel_pt1=crop_rel_pt1_pt2[0], rel_pt2=crop_rel_pt1_pt2[1])
 
     ## annotaion for the same
     coco_ann_di = WholeCoco2SingleImgCoco( annotation_path=coco_path, coco_di=None).run(img_name)
@@ -134,7 +130,7 @@ def run():
 
     ## draw with annotation
     print('\nRescaling image size + add padding to the image + cropping the imagee & maintaing the annotation')
-    Visualize.draw_annotation(img, final_ann_di)
+    show_img_with_annotation(img, final_ann_di)
 
     # ----------------------------------------------------------------------------------------------------------- #
 
