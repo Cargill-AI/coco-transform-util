@@ -1,4 +1,4 @@
-import os, glob
+import os
 from setuptools import setup, find_packages
 
 # Avoids IDE errors, but actual version is read from version.py
@@ -30,11 +30,11 @@ setup(
     long_description_content_type='text/markdown',
 
     author='Mohit Rajput',
-    author_email='mohitrajput901@gmail.com / mohit_rajput@cargill.com',
+    author_email='mohitrajput901@gmail.com',
     maintainer='Mohit Rajput',
-    maintainer_email='mohitrajput901@gmail.com / mohit_rajput@cargill.com',
+    maintainer_email='mohitrajput901@gmail.com',
 
-    url='https://git.cglcloud.com/ILC-APAC/coco-transform-util',
+    url='https://github.com/Cargill-AI/coco-transform-util',
     keywords=['COCO', 'Computer Vision', 'Deep Learning'],
 
     # license= 'MIT', "Apache 2.0"
@@ -42,16 +42,16 @@ setup(
 
     zip_safe=False,
     install_requires=install_requires,
-    
+
     packages=find_packages(),
 
     include_package_data=True,
-    
+
     classifiers=[
         'Development Status :: 1 - Alpha',
         'Intended Audience :: Science/Research',
         'Intended Audience :: Developers',
-#        'License :: OSI Approved :: Apache Software License',
+        # 'License :: OSI Approved :: Apache Software License',
         'Topic :: Software Development :: Libraries',
         'Topic :: Scientific/Engineering',
         'Topic :: Scientific/Engineering :: Artificial Intelligence',
@@ -60,5 +60,4 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6', ],
-
 )
