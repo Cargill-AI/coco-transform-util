@@ -14,7 +14,7 @@ $ python3 setup.py install
 ### Way 2
 ```bash
 $ pip3 install git+https://git.cglcloud.com/ILC-APAC/coco-transform-util.git
-<<< Username: <firstname_lastname@cargill.com>
+<<< Username: <user_id or email>
 <<< Password: <personal access token or SSH key>
 ```
 Personal Access token looks like this `83b318cg875a5g302e5fdaag74afc8ceb6a91a2e`.
