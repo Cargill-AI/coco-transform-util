@@ -29,17 +29,17 @@ def accept_and_process_modif_di(modif_step_di):
     '''
     modif_step_di = deepcopy(modif_step_di)
     ## check for values consistencies
-    
+
     ## process
-    if modif_step_di['aspect_ratio'] is None: modif_step_di['image_ht_wd'] = None 
+    if modif_step_di['aspect_ratio'] is None: modif_step_di['image_ht_wd'] = None
     if modif_step_di['aspect_ratio'] == 'maintain':
         # my_dict.pop('key', None)
         modif_step_di['image_ht_wd'] = ('-',modif_step_di['image_ht_wd'][1])
     modif_step_di['img_name'] = modif_step_di['image_path'].split('/')[-1]
 
-    print( 'Following Setting is being used:\n\t'+
-          '\n\t'.join([ f'{k}\t: {item}' for k,item in modif_step_di.items() ]))
-    
+    print('Following Setting is being used:\n\t'+
+          '\n\t'.join([ f'{k}\t: {item}' for k,item in modif_step_di.items()]))
+
     return modif_step_di
 
 
@@ -70,7 +70,7 @@ def get_modif_image(modif_step_di):
     if c_di['crop_pt1_pt2'] is not None:
         img = ImgTransform.relative_size_based_crop(
             img, rel_pt1=c_di['crop_pt1_pt2'][0], rel_pt2=c_di['crop_pt1_pt2'][1])
-        
+
     return img
 
 
@@ -78,31 +78,29 @@ def get_modif_coco_annotation(img, coco_path, modif_step_di):
     '''
     '''
     c_di = modif_step_di
-    
+
     ## 1. Get this Annotation from local
     coco_ann_di = WholeCoco2SingleImgCoco(
         annotation_path=coco_path, coco_di=None
         ).run(modif_step_di['img_name'])
-    
+
     if coco_ann_di is None:
         return None
-    
-    ## 2. Modify Invariant Annotation 
-    rel_coco_di = Coco2CocoRel().run( 
-        coco_ann_di, 
-        offset=('orig_to_pad' if c_di['padding_ht_wd'] is not None else None), 
+
+    ## 2. Modify Invariant Annotation
+    rel_coco_di = Coco2CocoRel().run(
+        coco_ann_di,
+        offset=('orig_to_pad' if c_di['padding_ht_wd'] is not None else None),
         rel_padding_ht_wd=c_di['padding_ht_wd'],
-        rel_crop_pt1_pt2=c_di['crop_pt1_pt2'] 
+        rel_crop_pt1_pt2=c_di['crop_pt1_pt2']
     )
-    
+
     ## 3. convert it to coordinate format
-    final_ann_di = CocoRel2CocoSpecificSize().run(rel_coco_di, desired_ht_wd=img.shape[:2], 
-                                              crop_oof=True, area_thresh_for_oof=0)
-    
+    final_ann_di = CocoRel2CocoSpecificSize().run(rel_coco_di, desired_ht_wd=img.shape[:2],
+                                                  crop_oof=True, area_thresh_for_oof=0)
+
     return final_ann_di
 
 
-
 # ---------------------------------------------------------------------------------------------------------- #
-    
-    
+

@@ -84,3 +84,12 @@ A sample HTML created from Jupyter-Notebook, contating some sample results has b
 - Flip horizontally or vertically. 
 - COCO to other annotation format can also be a feature to this package.
 
+## Push to pypi
+```bash
+$ python3 setup.py sdist
+$ twine upload dist/*
+```
+
+
+
+
