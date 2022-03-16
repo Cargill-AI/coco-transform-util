@@ -412,16 +412,12 @@ def create_mask(image, poly, category_fill_value=1, transparent_mask=True, save_
     Returns:
         Mask
     '''
-    if save_path is not None:
-        if save_path.split('.')[-1].lower()!='png':
-            raise Exception('Error: Saving mask as only png is supported.')
-
     ## creating blank mask
     mask = np.zeros(image.shape[:2], dtype='uint8')
 
     ## marking poly-area in mask
     poly_pt_format = Polygons(poly).style_points
-    cv2.fillPoly(mask, poly_pt_format, color=category_fill_value)
+    cv2.fillPoly(mask, poly_pt_format, color=255 if transparent_mask else category_fill_value)
 
     ## creating transparent mask if asked
     if transparent_mask:
@@ -429,15 +425,32 @@ def create_mask(image, poly, category_fill_value=1, transparent_mask=True, save_
 
     ## saving mask
     if save_path is not None:
-        # print('Old Values:', aml.ListOp.value_counts(mask.flatten()))
-        cv2.imwrite(save_path, mask, [cv2.IMWRITE_PNG_COMPRESSION, 0])
-        # , [cv2.IMWRITE_JPEG_QUALITY, 100]
-        # print('New Values:', aml.ListOp.value_counts(cv2.imread(save_path)[:,:,0].flatten()))
+        save_mask(save_path, mask)
 
     return mask
-
 
 '''
 mask = create_mask(image, poly, transparent_mask=True)
 aml.viewImage(mask)
 '''
+
+
+def save_mask(save_path, mask):
+    '''
+    Desc:
+        save_path: (SAVE USING THIS FUNCTION ONLY ELSE MASK VALUE CHANGES)
+                "png" is mandatory else some error is observed
+                eg. dir1/dir2/mask.png
+        png is needed as the extension
+    '''
+    if save_path is not None:
+        if save_path.split('.')[-1].lower()!='png':
+            raise Exception('Error: Saving mask as only png is supported.')
+    else:
+        raise Exception('Error: Saving mask as only png is supported.')
+
+    ## Saving the mask
+    # print('Old Values:', aml.ListOp.value_counts(mask.flatten()))
+    cv2.imwrite(save_path, mask, [cv2.IMWRITE_PNG_COMPRESSION, 0])
+    # , [cv2.IMWRITE_JPEG_QUALITY, 100]
+    # print('New Values:', aml.ListOp.value_counts(cv2.imread(save_path)[:,:,0].flatten()))

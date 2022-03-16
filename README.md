@@ -6,14 +6,14 @@ A python package to perform same transformation to coco-annotation as performed 
 
 ### Way 1
 ```bash
-$ git clone https://git.cglcloud.com/ILC-APAC/coco-transform-util.git
+$ git clone https://github.com/Cargill-AI/coco-transform-util.git
 $ cd coco-transform-util
 $ python3 setup.py install
 ```
 
 ### Way 2
 ```bash
-$ pip3 install git+https://git.cglcloud.com/ILC-APAC/coco-transform-util.git
+$ pip3 install git+https://github.com/Cargill-AI/coco-transform-util.git
 <<< Username: <user_id or email>
 <<< Password: <personal access token or SSH key>
 ```
